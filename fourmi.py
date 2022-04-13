@@ -6,6 +6,12 @@
 # https://github.com/uvsq-info/l1-python
 #########################################
 
+"""->pour deplacer la fourmi, faire une liste avec tous les deplacements
+possibles style : [[1,0],[0,1],[-1,0],[0,-1]] qui correspond respectivement
+à avancer d'une case vers la droite, vers le bas, vers la gauche, vers le
+haut
+et ensuite faire des if pour chaque condition (couleur) et definir l'indice"""
+
 #########################
 # import des librairies
 import tkinter as tk
@@ -63,8 +69,6 @@ def fourmi():
     y = 0
     fourmi = canvas.create_rectangle((x+L_f,y), (x+2*L_f,y+HAUTEUR_CASE),
                                     fill="blue")
-
-
 
 
 ############################
