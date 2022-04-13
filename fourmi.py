@@ -16,10 +16,14 @@ import random as rd
 # taille de la grille carrée
 N = 4
 # dimensions du canvas et de la grille
-LARGEUR = 450
-HAUTEUR = 450
+LARGEUR = 500
+HAUTEUR = 500
 LARGEUR_CASE = LARGEUR // N
 HAUTEUR_CASE = HAUTEUR // N
+
+#dimension de la fourmie
+L_f = LARGEUR_CASE // 3
+H_f = HAUTEUR_CASE
 
 #########################################
 # variables globales en plus des widgets
@@ -37,13 +41,13 @@ def init_grille():
        dimension N, les éléments de la configuration vont de 1 à N
     """
     global grille, config_cur
-    grille = [[0 for i in range(N)] for j in range(N)]
-    config_cur = [[0 for i in range(N)] for j in range(N)]
-    for i in range(1, N):
+    grille = [[0 for i in range(N+1)] for j in range(N+1)]
+    config_cur = [[0 for i in range(N+1)] for j in range(N+1)]
+    for i in range(1, N+1):
         x = (i - 1) * LARGEUR_CASE
-        for j in range(1, N):
+        for j in range(1, N+1):
             y = (j - 1) * HAUTEUR_CASE
-            col = "black"
+            col = "white"
             carre = canvas.create_rectangle(x, y, x+LARGEUR_CASE,
                                             y+HAUTEUR_CASE, fill=col,
                                             outline="grey50")
