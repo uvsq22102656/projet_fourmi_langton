@@ -21,7 +21,7 @@ HAUTEUR = 500
 LARGEUR_CASE = LARGEUR // N
 HAUTEUR_CASE = HAUTEUR // N
 
-#dimension de la fourmie
+# dimensions de la fourmi
 L_f = LARGEUR_CASE // 3
 H_f = HAUTEUR_CASE
 
@@ -40,18 +40,31 @@ def init_grille():
     """Retourne une grille carrée vide
        dimension N, les éléments de la configuration vont de 1 à N
     """
-    global grille, config_cur
+    global grille, config_cur    
+    liste_couleur =["white", "black"]
     grille = [[0 for i in range(N+1)] for j in range(N+1)]
     config_cur = [[0 for i in range(N+1)] for j in range(N+1)]
     for i in range(1, N+1):
         x = (i - 1) * LARGEUR_CASE
         for j in range(1, N+1):
             y = (j - 1) * HAUTEUR_CASE
-            col = "white"
+            n = rd.randint(0,1)
+            couleur = liste_couleur[n]
             carre = canvas.create_rectangle(x, y, x+LARGEUR_CASE,
-                                            y+HAUTEUR_CASE, fill=col,
+                                            y+HAUTEUR_CASE, fill=couleur,
                                             outline="grey50")
             grille[i][j] = carre
+    fourmi()
+
+
+def fourmi():
+    global fourmi
+    x = 0
+    y = 0
+    fourmi = canvas.create_rectangle((x+L_f,y), (x+2*L_f,y+HAUTEUR_CASE),
+                                    fill="blue")
+
+
 
 
 ############################
