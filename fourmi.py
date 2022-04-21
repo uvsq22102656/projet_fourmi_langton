@@ -53,10 +53,10 @@ def init_grille():
     global grille, config_cur
     grille = [[0 for i in range(N+1)] for j in range(N+1)]
     config_cur = [[0 for i in range(N+1)] for j in range(N+1)]
-    for i in range(1, N+1):
-        x = (i - 1) * LARGEUR_CASE
-        for j in range(1, N+1):
-            y = (j - 1) * HAUTEUR_CASE
+    for i in range(0, N):
+        x = i * LARGEUR_CASE
+        for j in range(0, N):
+            y = j * HAUTEUR_CASE
             n = rd.randint(0,1)
             couleur = liste_couleur[n]
             carre = canvas.create_rectangle(x, y, x+LARGEUR_CASE,
@@ -83,17 +83,32 @@ def mouvement():
     i = int((x - L_f)//LARGEUR_CASE)
     j = int(y//HAUTEUR_CASE)
 
-    if canvas.itemconfigure(grille[i][j]) == 'white': #autre pensee : grille[i][j]['fill'] == 'white' -> ne marche pas
+    if canvas['bg'] == 'white': # Q : faire variable globale avec couleur de la case ? ou recuperer dans fichier ?
         coul = 1-coul
         canvas.itemconfigure(grille[i][j], fill=liste_couleur[coul])
+        canvas.itemconfigure(grille[i][j], (x+L_f,y-L_f),(x0+L_f,y0-L_f))
         canvas.move(fourmi, LARGEUR_CASE, 0)
 
-    if canvas.itemconfigure(grille[i][j]) =='black':
+    if canvas['bg'] == 'black':
         coul = 1-coul
-        canvas.itemconfigure(grille[i][j], fill=liste_couleur[coul])        
+        canvas.itemconfigure(grille[i][j], fill=liste_couleur[coul])
+        canvas.itemconfigure(grille[i][j], (x+L_f,y-L_f),(x0+L_f,y0-L_f))      
         canvas.move(fourmi, -LARGEUR_CASE, 0)
     
     canvas.after(20, mouvement)
+    tore()
+
+def tore():
+    """la fourmi passe de l'autre coté du canvas"""
+    x0, y0, x1, y1 = canvas.coords(fourmi)
+    if x1<0:
+        canvas.coords(fourmi, x0+LARGEUR,y0, x1+LARGEUR, y1)
+    if x0>LARGEUR :
+        canvas.coords(fourmi, x0-LARGEUR,y0, x1-LARGEUR, y1)
+    if y1<0:
+        canvas.coords(fourmi, x0, y0+HAUTEUR, x1, y1+HAUTEUR)
+    if y0>HAUTEUR:
+        canvas.coords(fourmi, x0,y0-HAUTEUR, x1, y1-HAUTEUR)
 
 ############################
 # programme principal
