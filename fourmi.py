@@ -77,13 +77,13 @@ def fourmi():
 def mouvement():
     """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
     - change de couleur case
-    - deplace d'un case la fourmi"""
+    - deplace d'une case la fourmi"""
     global coul
     x, y, x0,y0 = canvas.coords(fourmi)
     i = int((x - L_f)//LARGEUR_CASE)
     j = int(y//HAUTEUR_CASE)
 
-    if canvas['bg'] == 'white': # Q : faire variable globale avec couleur de la case ? ou recuperer dans fichier ?
+    if canvas['bg'] == 'white': # REECUPERER COULEUR (CONFIGURATION DE LA GRILLE) DANS UN FICHIEEEEER
         coul = 1-coul
         canvas.itemconfigure(grille[i][j], fill=liste_couleur[coul])
         canvas.itemconfigure(grille[i][j], (x+L_f,y-L_f),(x0+L_f,y0-L_f))
