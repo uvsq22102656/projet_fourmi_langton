@@ -66,7 +66,7 @@ def init_grille():
     fourmi()
 
 
-def fourmi():
+def c_fourmi():
     """fait apparaitre la fourmi dans la premiere case à gauche du tableau"""
     global fourmi
     x = 0
