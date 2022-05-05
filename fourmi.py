@@ -49,6 +49,7 @@ def init_grille():
     """Retourne une grille carrée vide
        dimension N, les éléments de la configuration vont de 1 à N
        //!\\ ne pas autoriser configuration avec 4 case de meme couleur sinon tourne en boucle //!\\
+           
     """
     global grille, config_cur
     grille = [[0 for i in range(N+1)] for j in range(N+1)]
