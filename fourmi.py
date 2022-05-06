@@ -27,68 +27,93 @@ HAUTEUR = 500
 LARGEUR_CASE = LARGEUR // N
 HAUTEUR_CASE = HAUTEUR // N
 
+#vitesse d'execution
+vitesse = 100
+
 ##############################
 # variables globales en plus des widgets
 
 # objets graphiques représentant la grille dans un tableau 2D
 grille = None
+fourmi = None
 
-liste_couleur =["white", "black"]
-coul = 0
+#position initiale au milieu du canvas
+X = LARGEUR_CASE*N//2
+Y = HAUTEUR_CASE*N//2
+pos = (X,Y)
+id = [[0]*(N) for k in range(N)]
+dir = "N"
 
 ############################
 # fonction
-def init_grille():
-    """initialise la grille carrée de dimension N aleatoirement
-    """
-    global grille
-    grille = [[0 for i in range(N+1)] for j in range(N+1)]
-    for i in range(0, N):
-        x = i * LARGEUR_CASE
-        for j in range(0, N):
-            y = j * HAUTEUR_CASE
-            n = rd.randint(0,1)
-            carre = canvas.create_rectangle((x, y), (x+LARGEUR_CASE, y+HAUTEUR_CASE),
-                                            fill=liste_couleur[n], outline="grey50")
-            grille[i][j] = carre
-            fic = open("config.txt", "w")
-            fic.write(str(carre)+" ")
-            fic.close()
-    c_fourmi()
 
+def creation_case(i,j):
+    """cree uniquement des cases noires"""
+    x = j*LARGEUR_CASE
+    y = i*HAUTEUR_CASE
+    case = canvas.create_rectangle((x,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE),
+                                    fill='black')
+    return case
 
-def c_fourmi():
-    """fait apparaitre la fourmi dans la premiere case à gauche du tableau"""
+def c_fourmi(event):
+    """fait apparaitre la fourmi au milieu du tableau"""
     #changer cette fonction pour qu'on puisse la faire apparaitre a differents endroits
     global fourmi
-    x = 0
-    y = 0
-    fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x,y+HAUTEUR_CASE),
+    X=event.x
+    Y=event.y
+    fourmi = canvas.create_polygon((X+LARGEUR_CASE//2,Y), (X+LARGEUR_CASE,Y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
                                     fill="blue")
 
-def mouvement():
+def modif_case(pos, dir, id):
+    (ni,nj), ndir = mouvement(pos, dir, id)
+    i,j = pos
+    case = id[i][j]
+    if case == 0:
+        case = creation_case(i,j)
+        id[i][j] = case
+    else:
+        canvas.delete(case)
+        id[i][j] = 0
+
+    return (ni,nj), ndir
+
+def mouvement(pos, dir, id):
     """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
     - change de couleur case
-    - deplace d'une case la fourmi"""
-    global coul
-    x0,y0, x1,y1 = canvas.coords(fourmi)
-    i = int(x0//LARGEUR_CASE)
-    j = int(y0//HAUTEUR_CASE)
+    - deplace d'une case la fourmi en prenant compte de son orientation"""
+    i, j = pos
 
-    if canvas['bg'] == 'white': # REECUPERER COULEUR (CONFIGURATION DE LA GRILLE) DANS UN FICHIEEEEER
-        coul = 1-coul
-        canvas.itemconfigure(grille[i][j], fill=liste_couleur[coul])
-        canvas.itemconfigure(grille[i][j], (x+L_f,y-L_f),(x0+L_f,y0-L_f))
-        canvas.move(fourmi, LARGEUR_CASE, 0)
-
-    if canvas['bg'] == 'black':
-        coul = 1-coul
-        canvas.itemconfigure(grille[i][j], fill=liste_couleur[coul])
-        canvas.itemconfigure(grille[i][j], (x+L_f,y-L_f),(x0+L_f,y0-L_f))      
-        canvas.move(fourmi, -LARGEUR_CASE, 0)
+    if id[i][j] == 0:
+        if dir == "N":
+            r = (i, j + 1), "E"
+        elif dir == "S":
+            r = (i, j - 1), "O"
+        elif dir == "E":
+            r = (i + 1, j), "S"
+        elif dir == "O":
+            r = (i - 1, j), "N"
+    else:
+        if dir == "S":
+            r = (i, j + 1), "E"
+        elif dir == "N":
+            r = (i, j - 1), "O"
+        elif dir == "O":
+            r = (i + 1, j), "S"
+        elif dir == "E":
+            r = (i - 1, j), "N"
     
-    canvas.after(20, mouvement)
+    """x,y = r
+    x = x*LARGEUR_CASE
+    y = y*HAUTEUR_CASE
+    canvas.itemconfig(fourmi,(x+LARGEUR_CASE//2,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x,y+HAUTEUR_CASE) )
+    """
+    return r
+
+def play():
+    mouvement(pos, dir, id)
+    canvas.after(vitesse, mouvement)
     tore()
+    
 
 def tore():
     """la fourmi passe de l'autre coté du canvas quand elle atteint un bord"""
@@ -111,6 +136,20 @@ def lecture_fichier():
     for ligne in fic:
         id = ligne.split()
 
+def dim_vitesse(event):
+    """diminue la vitesse lorque l'utilisateur clique sur le bouton ralentir
+    vitesse minimale : 1000 ms entre chaque etape"""
+    global vitesse
+    if vitesse < 1000:
+        vitesse += 10
+
+def aug_vitesse(event):
+    """augmente la vitesse lorque l'utilisateur clique sur le bouton accelerer
+    vitesse maximale : 10ms entre chaque etape"""
+    global vitesse
+    if vitesse > 20:
+        vitesse -= 10
+
 ############################
 # programme principal
 
@@ -119,14 +158,20 @@ racine.title("Fourmi de Langton")
 
 # définition des widgets
 canvas = tk.Canvas(racine, width=LARGEUR, height=HAUTEUR)
-bouton_play = tk.Button(racine, text='play', command=mouvement)
-bouton_pause = tk.Button(racine, text='pause', command=pause)
 
-init_grille()
+bouton_play = tk.Button(racine, text='play', command=play)
+bouton_pause = tk.Button(racine, text='pause', command=pause)
+bouton_aug = tk.Button(racine, text='>>', command=aug_vitesse)
+bouton_dim = tk.Button(racine, text='<<', command=dim_vitesse)
+
 
 #position des widgets
-canvas.grid()
-bouton_play.grid()
+canvas.grid(columnspan=3)
+bouton_play.grid(row=1, column=0)
+bouton_aug.grid(row=1, column=2)
+bouton_dim.grid(row=1, column=3)
+
+canvas.bind('<Button-1>', c_fourmi)
 
 #boucle principale 
 racine.mainloop()
