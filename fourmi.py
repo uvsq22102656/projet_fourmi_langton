@@ -27,44 +27,120 @@ HAUTEUR = 500
 LARGEUR_CASE = LARGEUR // N
 HAUTEUR_CASE = HAUTEUR // N
 
-#vitesse d'execution
-vitesse = 100
+#vitesse d'execution en ms
+vitesse = 1000
 
 ##############################
 # variables globales en plus des widgets
-
-# objets graphiques représentant la grille dans un tableau 2D
-grille = None
 fourmi = None
 
-#position initiale au milieu du canvas
+#position initiale au milieu du canvas orienté Nord
 X = LARGEUR_CASE*N//2
 Y = HAUTEUR_CASE*N//2
-pos = (X,Y)
-id = [[0]*(N) for k in range(N)]
+pos = (N//2,N//2)
 dir = "N"
+
+#initialisation de la grille blanche = 0
+id = [[0]*(N) for k in range(N)]
 
 ############################
 # fonction
 
 def creation_case(i,j):
-    """cree uniquement des cases noires"""
+    """ne cree que les cases noires, cases blanches = canvas vierge"""
     x = j*LARGEUR_CASE
     y = i*HAUTEUR_CASE
     case = canvas.create_rectangle((x,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE),
                                     fill='black')
     return case
 
-def c_fourmi(event):
+def c_fourmi():
     """fait apparaitre la fourmi au milieu du tableau"""
     #changer cette fonction pour qu'on puisse la faire apparaitre a differents endroits
     global fourmi
-    X=event.x
-    Y=event.y
     fourmi = canvas.create_polygon((X+LARGEUR_CASE//2,Y), (X+LARGEUR_CASE,Y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
                                     fill="blue")
 
+def mouvement(pos, dir, id):
+    """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
+    et deplace d'une case la fourmi en prenant compte de son orientation"""
+    global fourmi
+    i, j = pos
+
+    if id[i][j] == 0:
+        if dir == "N":
+            j += 1
+            dir = "E"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE,y+HAUTEUR_CASE//2), (x,y), (x,y+HAUTEUR_CASE),
+                                            fill='blue')
+        elif dir == "S":
+            j -= 1
+            dir = "O"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x,y+HAUTEUR_CASE//2), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y),
+                                            fill='blue')
+        elif dir == "E":
+            i += 1
+            dir = "S"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
+                                            fill='blue')
+        elif dir == "O":
+            i -= 1
+            dir = "N"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x,y+HAUTEUR_CASE),
+                                            fill='blue')
+    else:
+        if dir == "S":
+            j += 1
+            dir = "E"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE,y+HAUTEUR_CASE//2), (x,y), (x,y+HAUTEUR_CASE),
+                                            fill='blue')
+        elif dir == "N":
+            j -= 1
+            dir = "O"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x,y+HAUTEUR_CASE//2), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y),
+                                            fill='blue')
+        elif dir == "O":
+            i += 1
+            dir = "S"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
+                                            fill='blue')
+        elif dir == "E":
+            i -= 1
+            dir = "N"
+            x = j*LARGEUR_CASE
+            y = i*HAUTEUR_CASE
+            canvas.delete(fourmi)
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x,y+HAUTEUR_CASE),
+                                            fill='blue')
+
+    return (i,j), dir
+    
+
 def modif_case(pos, dir, id):
+    """modifie l'etat de l'ancienne case apres que la fourmi l'ai quitte
+    puis renvoie la nouvelle position + id de la case (sur laquelle est arrive la fourmi)
+    pour la modifier à l'etape suivante"""
     (ni,nj), ndir = mouvement(pos, dir, id)
     i,j = pos
     case = id[i][j]
@@ -77,42 +153,13 @@ def modif_case(pos, dir, id):
 
     return (ni,nj), ndir
 
-def mouvement(pos, dir, id):
-    """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
-    - change de couleur case
-    - deplace d'une case la fourmi en prenant compte de son orientation"""
-    i, j = pos
-
-    if id[i][j] == 0:
-        if dir == "N":
-            r = (i, j + 1), "E"
-        elif dir == "S":
-            r = (i, j - 1), "O"
-        elif dir == "E":
-            r = (i + 1, j), "S"
-        elif dir == "O":
-            r = (i - 1, j), "N"
-    else:
-        if dir == "S":
-            r = (i, j + 1), "E"
-        elif dir == "N":
-            r = (i, j - 1), "O"
-        elif dir == "O":
-            r = (i + 1, j), "S"
-        elif dir == "E":
-            r = (i - 1, j), "N"
-    
-    """x,y = r
-    x = x*LARGEUR_CASE
-    y = y*HAUTEUR_CASE
-    canvas.itemconfig(fourmi,(x+LARGEUR_CASE//2,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x,y+HAUTEUR_CASE) )
-    """
-    return r
-
 def play():
-    mouvement(pos, dir, id)
-    canvas.after(vitesse, mouvement)
-    tore()
+    """initialise la fourmi au milieu
+    lance l'animation"""
+    global pos, dir
+    pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
+    canvas.after(vitesse, play)
+    #tore()
     
 
 def tore():
@@ -171,7 +218,7 @@ bouton_play.grid(row=1, column=0)
 bouton_aug.grid(row=1, column=2)
 bouton_dim.grid(row=1, column=3)
 
-canvas.bind('<Button-1>', c_fourmi)
+c_fourmi()
 
 #boucle principale 
 racine.mainloop()
