@@ -20,7 +20,7 @@ import random as rd
 #########################
 
 # taille de la grille carrée
-N = 100
+N = 10
 # dimensions du canvas et de la grille
 LARGEUR = 500
 HAUTEUR = 500
@@ -33,6 +33,7 @@ vitesse = 1000
 ##############################
 # variables globales en plus des widgets
 fourmi = None
+t = 0
 
 #position initiale au milieu du canvas orienté Nord
 X = LARGEUR_CASE*N//2
@@ -42,6 +43,9 @@ dir = "N"
 
 #initialisation de la grille blanche = 0
 id = [[0]*(N) for k in range(N)]
+
+#creation fichier de sauvegarde
+save = open("sauvegarde.txt", "w")
 
 ############################
 # fonction
@@ -63,7 +67,8 @@ def c_fourmi():
 
 def mouvement(pos, dir, id):
     """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
-    - deplace d'une case la fourmi en prenant compte de son orientation"""
+    - deplace d'une case la fourmi en prenant compte de son orientation
+    (fonction inspirée de http://pascal.ortiz.free.fr/contents/tkinter/projets_tkinter/langton/langton.html)"""
     global fourmi
     i, j = pos
 
@@ -156,7 +161,8 @@ def mouvement(pos, dir, id):
 def modif_case(pos, dir, id):
     """modifie l'etat de l'ancienne case apres que la fourmi l'ai quitte
     puis renvoie la nouvelle position + id de la case (sur laquelle est arrive la fourmi)
-    pour la modifier à l'etape suivante"""
+    pour la modifier à l'etape suivante
+    (fonction inspirée de http://pascal.ortiz.free.fr/contents/tkinter/projets_tkinter/langton/langton.html)"""
     (ni,nj), ndir = mouvement(pos, dir, id)
     i,j = pos
     case = id[i][j]
@@ -166,23 +172,29 @@ def modif_case(pos, dir, id):
     else:
         canvas.delete(case)
         id[i][j] = 0
-
+    save.write(str(id[i][j]) + " ")
     return (ni,nj), ndir
 
 def play():
     """initialise la fourmi au milieu
-    lance l'animation"""
-    global pos, dir
-    
-    pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
-    canvas.after(vitesse, play)    
+    lance l'animation
+    (fonction inspirée de http://pascal.ortiz.free.fr/contents/tkinter/projets_tkinter/langton/langton.html)"""
+    if bouton_pause['text'] == "Pause":
+        global pos, dir
+        pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
+        canvas.after(vitesse, play)    
 
 def pause():
     """permet d'arreter le programme"""
-    pass
+    global bouton_pause
+    if bouton_pause['text'] == "Pause":
+        bouton_pause.config(text="Restart")
+    else:
+        bouton_pause['text'] = "Pause"
+    save.close()
 
 def lecture_fichier():
-    fic = open("config.txt", "r")
+    fic = open("sauvegarde.txt", "r")
     for ligne in fic:
         id = ligne.split()
 
