@@ -90,7 +90,7 @@ def mouvement(pos, dir, id):
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
             canvas.delete(fourmi)
-            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y+HAUTEUR_CASE), (x,y), (x+LARGEUR_CASE,y),
                                             fill='blue')
         elif dir == "O":
             i -= 1
@@ -123,7 +123,7 @@ def mouvement(pos, dir, id):
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
             canvas.delete(fourmi)
-            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
+            fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y+HAUTEUR_CASE), (x,y), (x+LARGEUR_CASE,y),
                                             fill='blue')
         elif dir == "E":
             i -= 1
@@ -183,19 +183,19 @@ def lecture_fichier():
     for ligne in fic:
         id = ligne.split()
 
-def dim_vitesse(event):
+def dim_vitesse():
     """diminue la vitesse lorque l'utilisateur clique sur le bouton ralentir
     vitesse minimale : 1000 ms entre chaque etape"""
     global vitesse
     if vitesse < 1000:
-        vitesse += 10
+        vitesse += 100
 
-def aug_vitesse(event):
+def aug_vitesse():
     """augmente la vitesse lorque l'utilisateur clique sur le bouton accelerer
     vitesse maximale : 10ms entre chaque etape"""
     global vitesse
     if vitesse > 20:
-        vitesse -= 10
+        vitesse -= 100
 
 ############################
 # programme principal
@@ -208,13 +208,14 @@ canvas = tk.Canvas(racine, width=LARGEUR, height=HAUTEUR)
 
 bouton_play = tk.Button(racine, text='play', command=play)
 bouton_pause = tk.Button(racine, text='pause', command=pause)
-bouton_aug = tk.Button(racine, text='>>', command=aug_vitesse)
-bouton_dim = tk.Button(racine, text='<<', command=dim_vitesse)
+bouton_aug = tk.Button(racine, text='accelerer', command=aug_vitesse)
+bouton_dim = tk.Button(racine, text='ralentir', command=dim_vitesse)
 
 
 #position des widgets
-canvas.grid(columnspan=3)
+canvas.grid(columnspan=4)
 bouton_play.grid(row=1, column=0)
+bouton_pause.grid(row=1, column=1)
 bouton_aug.grid(row=1, column=2)
 bouton_dim.grid(row=1, column=3)
 
