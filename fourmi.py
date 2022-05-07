@@ -20,7 +20,7 @@ import random as rd
 #########################
 
 # taille de la grille carrée
-N = 10
+N = 100
 # dimensions du canvas et de la grille
 LARGEUR = 500
 HAUTEUR = 500
@@ -63,13 +63,15 @@ def c_fourmi():
 
 def mouvement(pos, dir, id):
     """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
-    et deplace d'une case la fourmi en prenant compte de son orientation"""
+    - deplace d'une case la fourmi en prenant compte de son orientation"""
     global fourmi
     i, j = pos
 
     if id[i][j] == 0:
         if dir == "N":
             j += 1
+            if j == N:
+                j=0 
             dir = "E"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -78,6 +80,8 @@ def mouvement(pos, dir, id):
                                             fill='blue')
         elif dir == "S":
             j -= 1
+            if j<0:
+                j=N-1
             dir = "O"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -86,6 +90,8 @@ def mouvement(pos, dir, id):
                                             fill='blue')
         elif dir == "E":
             i += 1
+            if i==N :
+                i=0 
             dir = "S"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -94,6 +100,8 @@ def mouvement(pos, dir, id):
                                             fill='blue')
         elif dir == "O":
             i -= 1
+            if i<0:
+                i=N-1
             dir = "N"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -103,6 +111,8 @@ def mouvement(pos, dir, id):
     else:
         if dir == "S":
             j += 1
+            if j==N:
+                j=0 
             dir = "E"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -111,6 +121,8 @@ def mouvement(pos, dir, id):
                                             fill='blue')
         elif dir == "N":
             j -= 1
+            if j<0:
+                j=N-1
             dir = "O"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -119,6 +131,8 @@ def mouvement(pos, dir, id):
                                             fill='blue')
         elif dir == "O":
             i += 1
+            if i==N:
+                i=0 
             dir = "S"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -127,6 +141,8 @@ def mouvement(pos, dir, id):
                                             fill='blue')
         elif dir == "E":
             i -= 1
+            if i<0:
+                i=N-1
             dir = "N"
             x = j*LARGEUR_CASE
             y = i*HAUTEUR_CASE
@@ -157,22 +173,9 @@ def play():
     """initialise la fourmi au milieu
     lance l'animation"""
     global pos, dir
-    pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
-    canvas.after(vitesse, play)
-    #tore()
     
-
-def tore():
-    """la fourmi passe de l'autre coté du canvas quand elle atteint un bord"""
-    x0, y0, x1, y1 = canvas.coords(fourmi)
-    if x1<0:
-        canvas.coords(fourmi, x0+LARGEUR,y0, x1+LARGEUR, y1)
-    if x0>LARGEUR :
-        canvas.coords(fourmi, x0-LARGEUR,y0, x1-LARGEUR, y1)
-    if y1<0:
-        canvas.coords(fourmi, x0, y0+HAUTEUR, x1, y1+HAUTEUR)
-    if y0>HAUTEUR:
-        canvas.coords(fourmi, x0,y0-HAUTEUR, x1, y1-HAUTEUR)
+    pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
+    canvas.after(vitesse, play)    
 
 def pause():
     """permet d'arreter le programme"""
@@ -194,8 +197,10 @@ def aug_vitesse():
     """augmente la vitesse lorque l'utilisateur clique sur le bouton accelerer
     vitesse maximale : 10ms entre chaque etape"""
     global vitesse
-    if vitesse > 20:
+    if vitesse > 200:
         vitesse -= 100
+    else:
+        vitesse = 10
 
 ############################
 # programme principal
@@ -210,6 +215,7 @@ bouton_play = tk.Button(racine, text='play', command=play)
 bouton_pause = tk.Button(racine, text='pause', command=pause)
 bouton_aug = tk.Button(racine, text='accelerer', command=aug_vitesse)
 bouton_dim = tk.Button(racine, text='ralentir', command=dim_vitesse)
+
 
 
 #position des widgets
