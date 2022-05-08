@@ -16,6 +16,7 @@ et ensuite faire des if pour chaque condition (couleur) et definir l'indice"""
 # import des librairies
 import tkinter as tk
 import random as rd
+from tracemalloc import stop
 
 #########################
 
@@ -33,19 +34,14 @@ vitesse = 1000
 ##############################
 # variables globales en plus des widgets
 fourmi = None
-t = 0
+p = True
+compt = 0 #variable pour relancer le jeu apres avoir mis sur pause
 
 #position initiale au milieu du canvas orienté Nord
 X = LARGEUR_CASE*N//2
 Y = HAUTEUR_CASE*N//2
 pos = (N//2,N//2)
 dir = "N"
-
-#initialisation de la grille blanche = 0
-id = [[0]*(N) for k in range(N)]
-
-#creation fichier de sauvegarde
-save = open("sauvegarde.txt", "w")
 
 ############################
 # fonction
@@ -59,9 +55,10 @@ def creation_case(i,j):
     return case
 
 def c_fourmi():
-    """fait apparaitre la fourmi au milieu du tableau"""
-    #changer cette fonction pour qu'on puisse la faire apparaitre a differents endroits
-    global fourmi
+    """- cree la liste id à la bonne taille
+    - fait apparaitre la fourmi au milieu du tableau"""
+    global id, fourmi
+    id = [[0]*(N) for k in range(N)] #initialisation de la grille blanche = 0
     fourmi = canvas.create_polygon((X+LARGEUR_CASE//2,Y), (X+LARGEUR_CASE,Y+HAUTEUR_CASE), (X,Y+HAUTEUR_CASE),
                                     fill="blue")
 
@@ -159,9 +156,9 @@ def mouvement(pos, dir, id):
     
 
 def modif_case(pos, dir, id):
-    """modifie l'etat de l'ancienne case apres que la fourmi l'ai quitte
-    puis renvoie la nouvelle position + id de la case (sur laquelle est arrive la fourmi)
-    pour la modifier à l'etape suivante
+    """- modifie l'etat de l'ancienne case apres que la fourmi l'ai quitte
+    - renvoie la nouvelle position et la direction (+ id de la case sur laquelle est arrive la fourmi)
+    pour les modifier à l'etape suivante
     (fonction inspirée de http://pascal.ortiz.free.fr/contents/tkinter/projets_tkinter/langton/langton.html)"""
     (ni,nj), ndir = mouvement(pos, dir, id)
     i,j = pos
@@ -172,31 +169,61 @@ def modif_case(pos, dir, id):
     else:
         canvas.delete(case)
         id[i][j] = 0
-    save.write(str(id[i][j]) + " ")
     return (ni,nj), ndir
 
 def play():
     """initialise la fourmi au milieu
     lance l'animation
     (fonction inspirée de http://pascal.ortiz.free.fr/contents/tkinter/projets_tkinter/langton/langton.html)"""
-    if bouton_pause['text'] == "Pause":
-        global pos, dir
+    global pos, dir, p
+    if p:
         pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
-        canvas.after(vitesse, play)    
+        canvas.after(vitesse, play)
+    else:
+        p = True
 
 def pause():
     """permet d'arreter le programme"""
-    global bouton_pause
-    if bouton_pause['text'] == "Pause":
-        bouton_pause.config(text="Restart")
-    else:
-        bouton_pause['text'] = "Pause"
-    save.close()
+    global p
+    p = False
 
-def lecture_fichier():
-    fic = open("sauvegarde.txt", "r")
+def sauvegarde():
+    """Ecrit la taille de la grille et les valeurs de la variable
+     terrain das le fichier sauvegarde.txt
+     -> fonction provenant du code generation_terrain fait en cours
+     """
+    fic = open("sauvegarde.txt", "w")
+    i, j = pos
+    fic.write(str(N) + " " + str(i) + " " + str(j) + " "+ str(dir) + "\n")
+    for i in range(N):
+        for j in range(N):
+            fic.write(str(id[i][j]) + "\n")
+    fic.close()
+
+def load():
+    """
+    Lire le fichier sauvegarde.txt et affiche dans le canvas la configuration lu
+     -> fonction provenant du code generation_terrain fait en cours
+    """
+    global N, id, pos, dir
+    fic = open("sauvegarde.txt", "r") 
+    l1 = fic.readline()
+    a = l1.split()
+    N = int(a[0])
+    pos = (int(a[1]), int(a[2]))
+    dir = a[3]
+    canvas.delete()
+    c_fourmi()
+    i = j = 0
     for ligne in fic:
-        id = ligne.split()
+        id[i][j] = int(ligne)
+        j += 1
+        if j == N:
+            j = 0
+            i += 1
+    print(id)
+    p = True
+    fic.close()
 
 def dim_vitesse():
     """diminue la vitesse lorque l'utilisateur clique sur le bouton ralentir
@@ -227,15 +254,19 @@ bouton_play = tk.Button(racine, text='play', command=play)
 bouton_pause = tk.Button(racine, text='pause', command=pause)
 bouton_aug = tk.Button(racine, text='accelerer', command=aug_vitesse)
 bouton_dim = tk.Button(racine, text='ralentir', command=dim_vitesse)
+bouton_save = tk.Button(racine, text='sauvegarder', command=sauvegarde)
+bouton_load = tk.Button(racine, text='ancienne configuration', command=load)
 
 
 
 #position des widgets
-canvas.grid(columnspan=4)
-bouton_play.grid(row=1, column=0)
-bouton_pause.grid(row=1, column=1)
-bouton_aug.grid(row=1, column=2)
-bouton_dim.grid(row=1, column=3)
+canvas.grid(row=0, column=1, columnspan=5, rowspan=2)
+bouton_play.grid(row=2, column=1)
+bouton_pause.grid(row=2, column=2)
+bouton_aug.grid(row=2, column=5)
+bouton_dim.grid(row=2, column=6)
+bouton_save.grid(row=0, column=0)
+bouton_load.grid(row=1, column=0)
 
 c_fourmi()
 
