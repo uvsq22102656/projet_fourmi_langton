@@ -15,7 +15,7 @@ from tracemalloc import stop
 #########################
 
 # taille de la grille carrée
-N = 50
+N = 10
 # dimensions du canvas et de la grille
 LARGEUR = 500
 HAUTEUR = 500
@@ -53,8 +53,7 @@ def creation_case(i,j):
     return case
 
 def c_fourmi(x, y, dir):
-    """- cree la liste id à la bonne taille
-    - fait apparaitre la fourmi au milieu du tableau, orientée Nord"""
+    """creation de la fourmi"""
     global fourmi
     if dir == "N":
         fourmi = canvas.create_polygon((x+LARGEUR_CASE//2,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x,y+HAUTEUR_CASE),
@@ -68,7 +67,6 @@ def c_fourmi(x, y, dir):
     elif dir == "O":
         fourmi = canvas.create_polygon((x,y+HAUTEUR_CASE//2), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y),
                                             fill='steelblue3')
-    return fourmi
 
 
 def mouvement(pos, dir, id):
@@ -307,6 +305,16 @@ def redemarrer():
     id = [[0]*(N) for k in range(N)]
     c_fourmi(X,Y,dir)
 
+def gestion_click(event):
+    """cree une fourmi a l'endroit ou l'utilisateur clique, orientee vers le nord"""
+    global j, i, dir
+    j = event.x//LARGEUR_CASE
+    i = event.y//HAUTEUR_CASE
+    dir = "N"
+    x = j*LARGEUR_CASE
+    y = i*HAUTEUR_CASE
+    c_fourmi(x,y, dir)
+
 ############################
 # programme principal
 
@@ -342,7 +350,8 @@ bouton_redem.grid(row=2, column=0)
 
 bouton_play2.grid(row=1, column=7)
 
-c_fourmi(X,Y,"N")
+canvas.bind('<Button-1>', gestion_click)
+#c_fourmi(X,Y,"N") #fait apparaitre une foumi au centre du canva, orientee nord
 
 #boucle principale 
 racine.mainloop()
