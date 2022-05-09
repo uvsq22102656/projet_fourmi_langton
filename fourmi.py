@@ -1,6 +1,5 @@
 #########################################
 # DLMP groupe 6
-# NOUVEAU Maxence
 # DERWEL Nathan 
 # VOLIVERT Coline
 # https://github.com/uvsq-info/l1-python
@@ -16,7 +15,7 @@ from tracemalloc import stop
 
 # taille de la grille carrée
 N = 10
-# dimensions du canvas et de la grille
+# dimensions du canvas et des cases
 LARGEUR = 500
 HAUTEUR = 500
 LARGEUR_CASE = LARGEUR // N
@@ -32,7 +31,7 @@ p = True #variable pour relancer le jeu apres avoir mis sur pause
 cmp = 0 #compte le nombre d'étapes réalisées
 mode2 = False #indique si on joue avec le mode 4 couleurs (deuxieme mode) ou le mode classique à 2 couleurs
 
-#position initiale au milieu du canvas orienté Nord
+#position initiale au milieu du canvas oriente Nord
 X = LARGEUR_CASE*N//2
 Y = HAUTEUR_CASE*N//2
 pos = (N//2,N//2)
@@ -45,7 +44,7 @@ id = [[0]*(N) for k in range(N)]
 # fonction
 
 def creation_case(i,j):
-    """ne cree que les cases noires, cases blanches = canvas vierge"""
+    """cree les cases noires, cases blanches = canvas vierge"""
     x = j*LARGEUR_CASE
     y = i*HAUTEUR_CASE
     case = canvas.create_rectangle((x,y), (x+LARGEUR_CASE,y+HAUTEUR_CASE),
@@ -151,7 +150,7 @@ def modif_case(pos, dir, id):
 
 def modif_case2(pos, dir, id):
     """meme principe que modif_cases() mais avec 4couleurs:
-    - id = 0 blanc (droite) -> id = 1 vert (droite) -> id = 2 rose (gauche) -> id = 3 noir (gauche)"""
+    - id = 0 blanc (droite) -> id = 1 vert (droite) -> id = 2 bleu (gauche) -> id = 3 jaune (gauche)"""
     (ni,nj), ndir = mouvement(pos, dir, id)
     i,j = pos
     x = j*LARGEUR_CASE
@@ -176,8 +175,7 @@ def modif_case2(pos, dir, id):
    
 
 def play():
-    """initialise la fourmi au milieu
-    lance l'animation
+    """- lance l'animation (mode de jeu n°1) tant que le bouton pause n'est pas clique
     (fonction inspirée de http://pascal.ortiz.free.fr/contents/tkinter/projets_tkinter/langton/langton.html)"""
     global pos, dir, p, mode2
     mode2 = False
@@ -214,9 +212,9 @@ def avance():
     compt()
 
 def sauvegarde():
-    """Ecrit la taille de la grille et les valeurs de la variable
-     terrain das le fichier sauvegarde.txt
-     -> fonction provenant du code generation_terrain fait en cours
+    """ Ecrit la taille de la grille, la position, l'orientation, le compteur,
+    le mode de jeu et les valeurs de la variable id dans le fichier sauvegarde.txt
+     -> fonction inspirée du code generation_terrain fait en cours
      """
     fic = open("sauvegarde.txt", "w")
     i, j = pos
@@ -228,7 +226,7 @@ def sauvegarde():
 
 def load():
     """ Lit le fichier sauvegarde.txt et affiche dans le canvas la configuration lu
-     -> fonction provenant du code generation_terrain fait en cours
+     -> fonction inspirée du code generation_terrain fait en cours
     """
     global N, id, pos, dir, p, cmp, case, mode2
     fic = open("sauvegarde.txt", "r") 
@@ -285,7 +283,7 @@ def aug_vitesse():
     if vitesse > 200:
         vitesse -= 100
     else:
-        vitesse = 10
+        vitesse = 5
 
 def compt():
     """affiche un compteur avec le nombre d'etapes effectuees"""
@@ -327,7 +325,7 @@ canvas = tk.Canvas(racine, width=LARGEUR, height=HAUTEUR, bg='snow')
 bouton_play = tk.Button(racine, text='play',font='Times', command=play)
 bouton_pause = tk.Button(racine, text='pause',font='Times', command=pause)
 bouton_avance = tk.Button(racine, text='>>',font='Times', command = avance)
-bouton_recule = tk.Button(racine, text='<<',font='Times')
+bouton_recule = tk.Button(racine, text='<<',font='Times') # nous n'avons pas reussi a la coder :/
 bouton_aug = tk.Button(racine, text='accelerer',font='Times', command=aug_vitesse)
 bouton_dim = tk.Button(racine, text='ralentir',font='Times', command=dim_vitesse)
 bouton_save = tk.Button(racine, text='sauvegarder',font='Times', relief="flat", command=sauvegarde)
@@ -351,7 +349,7 @@ bouton_redem.grid(row=2, column=0)
 bouton_play2.grid(row=1, column=7)
 
 canvas.bind('<Button-1>', gestion_click)
-#c_fourmi(X,Y,"N") #fait apparaitre une foumi au centre du canva, orientee nord
+c_fourmi(X,Y,"N") #fait apparaitre une foumi au centre du canva, orientee nord
 
 #boucle principale 
 racine.mainloop()
