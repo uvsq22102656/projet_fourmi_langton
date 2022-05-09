@@ -1,9 +1,7 @@
 # projet_fourmi_langton
 deuxieme projet S2 LDD MP : fourmi de Langton
 
-#########################################
-
-NOUVEAU Maxence
+---
 
 DERWEL Nathan
 
@@ -24,7 +22,7 @@ On peut :
 - revenir une etape en arriere en appuyant sur "<<" (fonction qui n'est pas codee)
 - accélérer ou ralentir la vitesse de passage des étapes avec "accelerer" et "ralentir"
 - sauvegarder et charger une ancienne configuration avec "sauvegarder" et "ancienne configuration"
-- redemarrer le jeu avec la fourmi au centre du canva orientee vers le nord
+- redemarrer le jeu avec la fourmi au centre du canva orientee vers le nord\n
 
 - passer au mode de jeu à 4 couleurs (blanc, jaune, vert et bleu) en appuyant sur "deuxieme mode de jeu" (rappuyer sur ce bouton pour relancer l'automate apres avoir mis sur pause)
 - cliquer a un endroit du canva pour faire apparaitre une nouvelle fourmi (fonction qui n'est pas terminee, la fourmi n'est pas animee)
