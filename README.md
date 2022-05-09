@@ -11,7 +11,7 @@ VOLIVERT Coline
 
 https://github.com/uvsq22102656/projet_fourmi_langton
 
-#########################################
+---
 
 REGLES DU JEU :
 La fourmi de Langton est représentée par une fleche bleue la pointe indiquant son orientation. Elle se deplace sur un tableau initalement blanc.
@@ -26,5 +26,5 @@ On peut :
 - sauvegarder et charger une ancienne configuration avec "sauvegarder" et "ancienne configuration"
 - redemarrer le jeu avec la fourmi au centre du canva orientee vers le nord
 
-- passer au mode de jeu à 4 couleurs (blanc, noir, vert et rose) en appuyant sur "deuxieme mode de jeu" (rappuyer sur ce bouton pour relancer l'automate apres avoir mis sur pause)
+- passer au mode de jeu à 4 couleurs (blanc, jaune, vert et bleu) en appuyant sur "deuxieme mode de jeu" (rappuyer sur ce bouton pour relancer l'automate apres avoir mis sur pause)
 - cliquer a un endroit du canva pour faire apparaitre une nouvelle fourmi (fonction qui n'est pas terminee, la fourmi n'est pas animee)
