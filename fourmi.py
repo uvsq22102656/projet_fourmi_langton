@@ -14,7 +14,7 @@ from tracemalloc import stop
 #########################
 
 # taille de la grille carrée
-N = 10
+N = 50
 # dimensions du canvas et des cases
 LARGEUR = 500
 HAUTEUR = 500
@@ -66,7 +66,7 @@ def c_fourmi(x, y, dir):
     elif dir == "O":
         fourmi = canvas.create_polygon((x,y+HAUTEUR_CASE//2), (x+LARGEUR_CASE,y+HAUTEUR_CASE), (x+LARGEUR_CASE,y),
                                             fill='steelblue3')
-
+    return fourmi
 
 def mouvement(pos, dir, id):
     """- fait tourner la fourmi de 90° (N<-Gauche / B->Droite)
