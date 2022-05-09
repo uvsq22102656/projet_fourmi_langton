@@ -2,7 +2,7 @@
 # DLMP groupe 6
 # DERWEL Nathan 
 # VOLIVERT Coline
-# https://github.com/uvsq-info/l1-python
+# https://github.com/uvsq22102656/projet_fourmi_langton
 #########################################
 
 #########################
