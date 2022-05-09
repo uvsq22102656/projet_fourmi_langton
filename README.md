@@ -24,3 +24,6 @@ On peut :
 - revenir une etape en arriere en appuyant sur "<<"
 - accélérer ou ralentir la vitesse de passage des étapes avec "accelerer" et "ralentir"
 - sauvegarder et charger une ancienne configuration avec "sauvegarder" et "ancienne configuration"
+- redemarrer le jeu avec la fourmi au centre du canva orientee vers le nord
+
+- passer au mode de jeu à 4 couleurs (blanc, noir, vert et rose) en appuyant sur "deuxieme mode de jeu" (rappuyer sur ce bouton pour relancer l'automate apres avoir mis sur pause)
