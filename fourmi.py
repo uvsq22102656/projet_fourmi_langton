@@ -14,7 +14,7 @@ from tracemalloc import stop
 #########################
 
 # taille de la grille carrée
-N = 50
+N = 100
 # dimensions du canvas et des cases
 LARGEUR = 500
 HAUTEUR = 500
@@ -131,6 +131,69 @@ def mouvement(pos, dir, id):
     fourmi = c_fourmi(x,y,dir)
     return (i,j), dir
 
+def mouvement2(pos, dir, id):
+    """meme principe que mouvement() mais avec 4couleurs:
+    - fait tourner la fourmi de 90°
+    - deplace d'une case la fourmi en prenant compte de son orientation
+    id = 0 blanc (droite) -> id = 1 vert (droite) -> id = 2 bleu (gauche) -> id = 3 jaune (gauche)"""
+    global fourmi
+    i, j = pos
+
+    if id[i][j] == 0 or id[i][j] == 1:
+        if dir == "N":
+            j += 1
+            if j == N:
+                j=0 
+            dir = "E"
+
+        elif dir == "S":
+            j -= 1
+            if j<0:
+                j=N-1
+            dir = "O"
+
+        elif dir == "E":
+            i += 1
+            if i==N :
+                i=0 
+            dir = "S"
+
+        elif dir == "O":
+            i -= 1
+            if i<0:
+                i=N-1
+            dir = "N"
+            
+    else:
+        if dir == "S":
+            j += 1
+            if j==N:
+                j=0 
+            dir = "E"
+            
+        elif dir == "N":
+            j -= 1
+            if j<0:
+                j=N-1
+            dir = "O"
+            
+        elif dir == "O":
+            i += 1
+            if i==N:
+                i=0 
+            dir = "S"
+
+        elif dir == "E":
+            i -= 1
+            if i<0:
+                i=N-1
+            dir = "N"
+
+    x = j*LARGEUR_CASE
+    y = i*HAUTEUR_CASE
+    canvas.delete(fourmi)
+    fourmi = c_fourmi(x,y,dir)
+    return (i,j), dir
 
 def modif_case(pos, dir, id):
     """- modifie l'etat de l'ancienne case apres que la fourmi l'ai quitte
@@ -151,7 +214,7 @@ def modif_case(pos, dir, id):
 def modif_case2(pos, dir, id):
     """meme principe que modif_cases() mais avec 4couleurs:
     - id = 0 blanc (droite) -> id = 1 vert (droite) -> id = 2 bleu (gauche) -> id = 3 jaune (gauche)"""
-    (ni,nj), ndir = mouvement(pos, dir, id)
+    (ni,nj), ndir = mouvement2(pos, dir, id)
     i,j = pos
     x = j*LARGEUR_CASE
     y = i*HAUTEUR_CASE
@@ -180,7 +243,7 @@ def play():
     global pos, dir, p, mode2
     mode2 = False
     if p:
-        pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs
+        pos, dir = modif_case(pos, dir, id) #on stocke les nouvelles valeurs (reaffecte) que qd action sur la case est terminee
         compt()
         canvas.after(vitesse, play)
     else:
@@ -230,8 +293,8 @@ def load():
     """
     global N, id, pos, dir, p, cmp, case, mode2
     fic = open("sauvegarde.txt", "r") 
-    l1 = fic.readline()
-    a = l1.split()
+    l1 = fic.readline() #str contenant la premiere ligne
+    a = l1.split() #liste de tous les elements separes par des espaces
 
     N = int(a[0])
     pos = (int(a[1]), int(a[2]))
@@ -297,7 +360,7 @@ def redemarrer():
     global id, cmp, pos, dir
     pos = (N//2,N//2)
     dir = "N"
-    cmp = 0
+    cmp = -1
     compt()
     canvas.delete("all")
     id = [[0]*(N) for k in range(N)]
